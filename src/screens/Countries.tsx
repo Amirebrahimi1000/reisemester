@@ -2,6 +2,20 @@ import { useState } from 'react'
 import { byOrder } from '../data/countries'
 import { useStore } from '../store'
 import { CountryMap } from '../components/CountryMap'
+import { CountrySilhouette } from '../components/CountrySilhouette'
+
+// A little decorative emoji "postcard" per country.
+const SCENES: Record<string, string[]> = {
+  no: ['🏔️', '⛴️', '🌲', '🦌'],
+  dk: ['🚲', '🧜‍♀️', '🌭', '🧱'],
+  de: ['🏰', '🚗', '🥨', '🎄'],
+  be: ['🍟', '🍫', '🧇', '🎨'],
+  lu: ['🏰', '🌉', '🚈', '💶'],
+  fr: ['🗼', '🥐', '🧀', '🚴'],
+  ch: ['🏔️', '🍫', '🐄', '🧀'],
+  li: ['🏰', '👑', '🏔️', '🎿'],
+  it: ['🍕', '🍦', '🏛️', '🌅'],
+}
 
 export default function Countries() {
   const { state, unlockCountry } = useStore()
@@ -68,8 +82,20 @@ export default function Countries() {
 
             {open && (
               <div className="pop">
-                <div className="country-map-wrap">
-                  <CountryMap id={c.id} />
+                <div className="country-visuals">
+                  <figure className="visual">
+                    <CountryMap id={c.id} />
+                    <figcaption>Her i Europa</figcaption>
+                  </figure>
+                  <figure className="visual">
+                    <CountrySilhouette id={c.id} />
+                    <figcaption>Landets form</figcaption>
+                  </figure>
+                </div>
+                <div className="emoji-scene">
+                  {(SCENES[c.id] ?? []).map((e, i) => (
+                    <span key={i}>{e}</span>
+                  ))}
                 </div>
                 <div className="info-row">
                   <span className="pill">

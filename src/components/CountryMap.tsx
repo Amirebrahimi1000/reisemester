@@ -1,92 +1,41 @@
 import { byOrder } from '../data/countries'
+import { EUROPE_VIEWBOX, REGIONS, countryShape } from '../data/europeMap'
 
-// Approximate positions on a stylised mini-map of the route (viewBox 200x300),
-// laid out to roughly match where each country sits geographically.
-const POINTS: Record<string, [number, number]> = {
-  no: [70, 30],
-  dk: [96, 74],
-  de: [126, 116],
-  be: [88, 140],
-  lu: [106, 158],
-  fr: [78, 192],
-  ch: [126, 196],
-  li: [146, 190],
-  it: [150, 256],
-}
+const [vx, vy, vw, vh] = EUROPE_VIEWBOX.split(' ').map(Number)
 
-// A small offline locator map: the whole route with the given country pinned.
+// A small offline locator map: real European borders, with the given country
+// filled and pinned so a child can see where it sits among its neighbours.
 export function CountryMap({ id }: { id: string }) {
-  const stops = byOrder.filter((c) => POINTS[c.id])
-  const line = stops.map((c) => POINTS[c.id].join(',')).join(' ')
-  const hi = POINTS[id]
   const country = byOrder.find((c) => c.id === id)
-  const first = POINTS[stops[0].id]
-  const last = POINTS[stops[stops.length - 1].id]
+  const shape = countryShape(id)
+  const cx = shape ? (shape.bbox.minX + shape.bbox.maxX) / 2 : 0
+  const cy = shape ? (shape.bbox.minY + shape.bbox.maxY) / 2 : 0
 
   return (
     <svg
-      viewBox="0 0 200 300"
+      viewBox={EUROPE_VIEWBOX}
       className="country-map"
       role="img"
-      aria-label={`Kart som viser hvor ${country?.name ?? ''} ligger på ruten`}
+      aria-label={`Kart over Europa der ${country?.name ?? ''} er markert`}
     >
-      <defs>
-        <linearGradient id="cm-sea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stopColor="#bae6fd" />
-          <stop offset="1" stopColor="#7dd3fc" />
-        </linearGradient>
-      </defs>
-
-      <rect x="0" y="0" width="200" height="300" rx="16" fill="url(#cm-sea)" />
-
-      {/* driving route */}
-      <polyline
-        points={line}
-        fill="none"
-        stroke="#0369a1"
-        strokeOpacity="0.45"
-        strokeWidth="2.5"
-        strokeDasharray="5 6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-
-      {/* start / finish flags */}
-      <text x={first[0]} y={first[1] - 13} textAnchor="middle" fontSize="12">🏁</text>
-      <text x={last[0] + 2} y={last[1] + 24} textAnchor="middle" fontSize="12">🏖️</text>
-
-      {/* every stop */}
-      {stops.map((c) => {
-        const [x, y] = POINTS[c.id]
-        const active = c.id === id
-        return (
-          <circle
-            key={c.id}
-            cx={x}
-            cy={y}
-            r={active ? 8 : 4}
-            fill={active ? '#16a34a' : '#e0f2fe'}
-            stroke={active ? '#fff' : '#0369a1'}
-            strokeWidth={active ? 2.5 : 1}
-            strokeOpacity={active ? 1 : 0.5}
-          />
-        )
-      })}
-
-      {/* pin + name for the highlighted country */}
-      {hi && country && (
+      {/* sea */}
+      <rect x={vx} y={vy} width={vw} height={vh} fill="#a5d8ef" />
+      {/* land + borders */}
+      {REGIONS.map((r) => (
+        <path
+          key={r.id}
+          d={r.path}
+          fill={r.id === id ? '#22c55e' : '#e7dcc0'}
+          stroke="#ffffff"
+          strokeWidth={0.4}
+          strokeLinejoin="round"
+        />
+      ))}
+      {/* "you are here" pin */}
+      {shape && (
         <>
-          <text x={hi[0]} y={hi[1] - 12} textAnchor="middle" fontSize="17">📍</text>
-          <text
-            x="100"
-            y="292"
-            textAnchor="middle"
-            fontSize="13"
-            fontWeight="800"
-            fill="#0c4a6e"
-          >
-            {country.flag} {country.name}
-          </text>
+          <circle cx={cx} cy={cy} r={3.4} fill="#dc2626" stroke="#fff" strokeWidth={1.1} />
+          <circle cx={cx} cy={cy} r={1} fill="#fff" />
         </>
       )}
     </svg>
