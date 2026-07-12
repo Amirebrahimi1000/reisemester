@@ -415,6 +415,23 @@ button {
   color: var(--muted);
 }
 
+.gps-btn {
+  margin-top: 0;
+  background: var(--grape);
+}
+
+.gps-msg {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 12px 14px;
+  margin: 10px 0 4px;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
 .visual-map {
   margin: 10px 0 4px;
 }

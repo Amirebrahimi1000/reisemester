@@ -3,6 +3,7 @@ import { byOrder } from '../data/countries'
 import { useStore } from '../store'
 import { CountryMap } from '../components/CountryMap'
 import { CountrySilhouette } from '../components/CountrySilhouette'
+import { detectCountry } from '../data/countryBounds'
 
 // A little decorative emoji "postcard" per country.
 const SCENES: Record<string, string[]> = {
@@ -18,15 +19,57 @@ const SCENES: Record<string, string[]> = {
 }
 
 export default function Countries() {
-  const { state, unlockCountry } = useStore()
+  const { state, unlockCountry, unlockAchievement } = useStore()
   const [openId, setOpenId] = useState<string | null>(null)
+  const [gpsBusy, setGpsBusy] = useState(false)
+  const [gpsMsg, setGpsMsg] = useState('')
+
+  const findMe = () => {
+    if (!('geolocation' in navigator)) {
+      setGpsMsg('📵 Denne enheten støtter ikke posisjon.')
+      return
+    }
+    setGpsBusy(true)
+    setGpsMsg('📡 Finner ut hvor dere er …')
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGpsBusy(false)
+        const id = detectCountry(pos.coords.latitude, pos.coords.longitude)
+        const country = id ? byOrder.find((c) => c.id === id) : null
+        if (country) {
+          unlockCountry(country.id)
+          unlockAchievement(`gps-${country.id}`) // one-time bonus for a real check-in
+          setOpenId(country.id)
+          setGpsMsg(`🎉 Dere er i ${country.name}! Landet er låst opp – bonusstjerner! ⭐`)
+        } else {
+          setGpsMsg(
+            '🤔 Fant ikke akkurat hvilket land dere er i – kanskje dere er mellom to land eller i en tunnel. Prøv igjen litt senere, eller bruk «Lås opp».',
+          )
+        }
+      },
+      (err) => {
+        setGpsBusy(false)
+        setGpsMsg(
+          err.code === err.PERMISSION_DENIED
+            ? '🔐 Du må tillate posisjon for at dette skal virke. Bruk gjerne «Lås opp» i stedet.'
+            : '🛰️ Fikk ikke tak i posisjonen. GPS trenger fri himmel – det er vanskelig i tunneler. Prøv igjen ute i det fri.',
+        )
+      },
+      { enableHighAccuracy: true, timeout: 9000, maximumAge: 60000 },
+    )
+  }
 
   return (
     <>
       <h2 className="screen-title">🌍 Grenseland</h2>
-      <p className="subtle" style={{ color: '#e0f2fe', margin: '0 4px 12px' }}>
+      <p className="subtle" style={{ color: '#e0f2fe', margin: '0 4px 10px' }}>
         Hver gang dere kjører inn i et nytt land, lås det opp og oppdag hemmelige fakta! ⭐⭐⭐
       </p>
+
+      <button className="primary gps-btn" onClick={findMe} disabled={gpsBusy}>
+        {gpsBusy ? '📡 Finner posisjon …' : '📍 Jeg er her nå!'}
+      </button>
+      {gpsMsg && <div className="gps-msg">{gpsMsg}</div>}
 
       {byOrder.map((c) => {
         const unlocked = state.countries.includes(c.id)
