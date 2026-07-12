@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { StoreProvider, useStore } from './store'
 import Home from './screens/Home'
 import Bingo from './screens/Bingo'
@@ -23,10 +23,18 @@ const TABS: { id: Screen; label: string; emoji: string }[] = [
   { id: 'dagbok', label: 'Dagbok', emoji: '📔' },
 ]
 
+const THEME_KEY = 'gardaturen.theme'
+
 function Shell() {
   const { state, stars, setName } = useStore()
   const [screen, setScreen] = useState<Screen>('home')
   const [nameDraft, setNameDraft] = useState('')
+  const [dark, setDark] = useState(() => localStorage.getItem(THEME_KEY) === 'dark')
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+    localStorage.setItem(THEME_KEY, dark ? 'dark' : 'light')
+  }, [dark])
 
   // First run: ask for the player's name.
   if (!state.playerName) {
@@ -62,7 +70,16 @@ function Shell() {
     <div className="app">
       <div className="topbar">
         <h1>Gardaturen</h1>
-        <span className="starcount">⭐ {stars}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            className="theme-toggle"
+            onClick={() => setDark((d) => !d)}
+            aria-label={dark ? 'Bytt til dagmodus' : 'Bytt til kveldsmodus'}
+          >
+            {dark ? '☀️' : '🌙'}
+          </button>
+          <span className="starcount">⭐ {stars}</span>
+        </div>
       </div>
 
       <ErrorBoundary key={screen}>

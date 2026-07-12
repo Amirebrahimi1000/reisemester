@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import type { Screen } from '../App'
 import { GOAL_STARS, useStore } from '../store'
 import { BINGO_CARDS } from '../data/bingo'
@@ -5,6 +6,9 @@ import { QUIZ } from '../data/quiz'
 import { COUNTRIES } from '../data/countries'
 import { MISSIONS } from '../data/missions'
 import { PLATES } from '../data/plates'
+import { GARDA, haversineKm } from '../lib/distance'
+import { Badges } from '../components/Badges'
+import { Diploma } from '../components/Diploma'
 
 const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
   { id: 'bingo', emoji: '🎯', name: 'Reisebingo', desc: 'Finn ting ut av bilvinduet' },
@@ -18,6 +22,31 @@ const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
 
 export default function Home({ go }: { go: (s: Screen) => void }) {
   const { state, stars, reset } = useStore()
+  const [dist, setDist] = useState('')
+  const [distBusy, setDistBusy] = useState(false)
+  const [showDiploma, setShowDiploma] = useState(false)
+
+  const howFar = () => {
+    if (!('geolocation' in navigator)) {
+      setDist('📵 Enheten støtter ikke posisjon.')
+      return
+    }
+    setDistBusy(true)
+    setDist('📡 Måler avstand …')
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setDistBusy(false)
+        const km = haversineKm(pos.coords.latitude, pos.coords.longitude, GARDA.lat, GARDA.lon)
+        if (km < 3) setDist('🎉 Dere er nesten framme ved Gardasjøen!')
+        else setDist(`📏 Ca. ${Math.round(km).toLocaleString('nb-NO')} km igjen til Gardasjøen`)
+      },
+      () => {
+        setDistBusy(false)
+        setDist('🛰️ Fikk ikke posisjon – GPS trenger fri himmel. Prøv igjen ute i det fri.')
+      },
+      { enableHighAccuracy: true, timeout: 9000, maximumAge: 60000 },
+    )
+  }
 
   const bingoCells = Object.values(state.bingo).reduce((n, a) => n + a.length, 0)
   const totalBingo = BINGO_CARDS.reduce((n, c) => n + c.cells.length, 0)
@@ -28,7 +57,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     home: '',
     bingo: `${bingoCells}/${totalBingo}`,
     quiz: `${quizDone}/${totalQuiz}`,
-    spill: '8 spill',
+    spill: '9 spill',
     land: `${state.countries.length}/${COUNTRIES.length}`,
     oppdrag: `${state.missions.length}/${MISSIONS.length}`,
     skilt: `${state.plates.length}/${PLATES.length}`,
@@ -70,6 +99,11 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
             ))}
           </div>
         </div>
+
+        <button className="farbtn" onClick={howFar} disabled={distBusy}>
+          {distBusy ? '📡 Måler …' : '📏 Hvor langt igjen til Gardasjøen?'}
+        </button>
+        {dist && <div className="far-msg">{dist}</div>}
       </div>
 
       <div className="menu-grid">
@@ -82,6 +116,12 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
           </button>
         ))}
       </div>
+
+      <Badges />
+      <button className="primary" onClick={() => setShowDiploma(true)}>
+        🎓 Vis reisediplom
+      </button>
+      {showDiploma && <Diploma onClose={() => setShowDiploma(false)} />}
 
       <button
         className="reset-link"

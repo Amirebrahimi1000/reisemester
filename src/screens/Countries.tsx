@@ -5,6 +5,7 @@ import { CountryMap } from '../components/CountryMap'
 import { CountrySilhouette } from '../components/CountrySilhouette'
 import { detectCountry } from '../data/countryBounds'
 import { celebrate } from '../lib/celebrate'
+import { canSpeak, speakGreeting } from '../lib/speak'
 
 // A little decorative emoji "postcard" per country.
 const SCENES: Record<string, string[]> = {
@@ -161,6 +162,11 @@ export default function Countries() {
                 </div>
                 <p className="subtle" style={{ margin: '4px 0' }}>
                   Si «hei»: <b>{c.hello}</b> — {c.helloTip}
+                  {canSpeak() && (
+                    <button className="speak-btn" onClick={() => speakGreeting(c.id)}>
+                      🔊 Hør
+                    </button>
+                  )}
                 </p>
                 <div className="country-facts">
                   {c.facts.map((f, i) => (

@@ -4,6 +4,7 @@ import Flags from './Flags'
 import Memory from './Memory'
 import Reaction from './Reaction'
 import DistanceGuess from './DistanceGuess'
+import CapitalGame from './CapitalGame'
 import PlateMath from './PlateMath'
 import Anagram from './Anagram'
 import RouteOrder from './RouteOrder'
@@ -20,6 +21,7 @@ interface Game {
 
 const GAMES: Game[] = [
   { id: 'flagg', emoji: '🚩', name: 'Gjett landet', desc: 'Kjenn igjen flaggene fra Europa', two: true, C: Flags },
+  { id: 'hovedstad', emoji: '🏛️', name: 'Hovedstad-spillet', desc: 'Hvilken by er hovedstaden?', two: true, C: CapitalGame },
   { id: 'husk', emoji: '🧠', name: 'Husk-spillet', desc: 'Finn parene – memory med reise-symboler', two: true, C: Memory },
   { id: 'reaksjon', emoji: '⚡', name: 'Reaksjonstest', desc: 'Trykk når skjermen blir grønn', two: true, C: Reaction },
   { id: 'avstand', emoji: '📏', name: 'Gjett avstanden', desc: 'Hvem gjetter nærmest?', two: true, C: DistanceGuess },
