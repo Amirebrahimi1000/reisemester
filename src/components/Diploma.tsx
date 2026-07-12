@@ -15,7 +15,7 @@ export function Diploma({ onClose }: { onClose: () => void }) {
       <div className="diploma" onClick={(e) => e.stopPropagation()}>
         <div className="diploma-seal">🎓</div>
         <h2>Reisediplom</h2>
-        <p className="diploma-sub">Gardaturen 🚗</p>
+        <p className="diploma-sub">Reisemester 🚗</p>
         <p className="diploma-name">{state.playerName || 'Reisende'}</p>
         <p className="diploma-text">
           har vært på biltur fra 🏁 Skien til 🏖️ Gardasjøen!

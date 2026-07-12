@@ -18,7 +18,7 @@ function buildText(entries: JournalEntry[], name: string): string {
   const who = name ? `${name} sin reise til Gardasjøen` : 'Reise til Gardasjøen'
   const line = '='.repeat(40)
   const sep = '-'.repeat(40)
-  const header = `Reisedagbok – Gardaturen\n${who}\n${line}\n\n`
+  const header = `Reisedagbok – Reisemester\n${who}\n${line}\n\n`
   const body = [...entries]
     .reverse() // stored newest-first → export oldest-first (chronological)
     .map((e) => `${e.date}   ${e.country} ${e.mood}\n\n${e.text}\n\n${sep}\n`)

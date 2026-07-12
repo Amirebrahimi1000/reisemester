@@ -12,8 +12,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Gardaturen',
-        short_name: 'Gardaturen',
+        name: 'Reisemester',
+        short_name: 'Reisemester',
         description: 'Reisespill og oppgaver for bilturen til Gardasjøen',
         lang: 'no',
         theme_color: '#0e7490',

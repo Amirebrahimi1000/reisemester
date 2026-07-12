@@ -1,7 +1,7 @@
-# 🚗 Gardaturen
+# 🚗 Reisemester
 
-En morsom og lærerik **offline reise-app** for bilturen fra Skien til Gardasjøen –
-laget spesielt for en nysgjerrig 10-åring (og resten av familien).
+En morsom og lærerik **offline reise-app** for bilturer – laget spesielt for en
+nysgjerrig 10-åring (og resten av familien). Første tur: Skien → Gardasjøen.
 
 Appen fungerer 100 % offline i bilen når den først er lastet inn, og er en
 installerbar PWA (kan legges til på hjemskjermen på telefon/nettbrett).

@@ -75,7 +75,7 @@ function Shell() {
     return (
       <div className="intro">
         <div className="big-emoji">🚗🏔️</div>
-        <h1>Gardaturen</h1>
+        <h1>Reisemester</h1>
         <p style={{ color: '#fff', maxWidth: 320, fontWeight: 700 }}>
           Reisespill for hele veien fra Skien til Gardasjøen! Hva heter du?
         </p>
@@ -103,7 +103,7 @@ function Shell() {
   return (
     <div className="app">
       <div className="topbar">
-        <h1>Gardaturen</h1>
+        <h1>Reisemester</h1>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <button
             className="theme-toggle"
