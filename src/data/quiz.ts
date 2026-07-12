@@ -11,6 +11,15 @@ export interface QuizCategory {
   title: string
   flag: string
   questions: Question[]
+  countryIds?: string[] // country-specific category; shown only if the trip visits it
+}
+
+// Categories for the active trip: country categories only for visited countries,
+// plus all the theme categories (which have no countryIds).
+export function tripCategories(countryIds: string[]): QuizCategory[] {
+  return QUIZ.filter(
+    (c) => !c.countryIds || c.countryIds.some((id) => countryIds.includes(id)),
+  )
 }
 
 export const QUIZ: QuizCategory[] = [
@@ -18,6 +27,7 @@ export const QUIZ: QuizCategory[] = [
     id: 'norge',
     title: 'Norge',
     flag: '🇳🇴',
+    countryIds: ['no'],
     questions: [
       {
         id: 'no1',
@@ -109,6 +119,7 @@ export const QUIZ: QuizCategory[] = [
     id: 'danmark',
     title: 'Danmark',
     flag: '🇩🇰',
+    countryIds: ['dk'],
     questions: [
       {
         id: 'dk1',
@@ -200,6 +211,7 @@ export const QUIZ: QuizCategory[] = [
     id: 'tyskland',
     title: 'Tyskland',
     flag: '🇩🇪',
+    countryIds: ['de'],
     questions: [
       {
         id: 'de1',
@@ -291,6 +303,7 @@ export const QUIZ: QuizCategory[] = [
     id: 'sveits',
     title: 'Sveits & Alpene',
     flag: '🇨🇭',
+    countryIds: ['ch'],
     questions: [
       {
         id: 'ch1',
@@ -387,6 +400,7 @@ export const QUIZ: QuizCategory[] = [
     id: 'italia',
     title: 'Italia & Gardasjøen',
     flag: '🇮🇹',
+    countryIds: ['it'],
     questions: [
       {
         id: 'it1',
@@ -478,6 +492,7 @@ export const QUIZ: QuizCategory[] = [
     id: 'benelux',
     title: 'Belgia, Luxembourg & Frankrike',
     flag: '🧇',
+    countryIds: ['be', 'lu', 'fr'],
     questions: [
       {
         id: 'bx1',

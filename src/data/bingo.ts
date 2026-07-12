@@ -3,6 +3,15 @@ export interface BingoCard {
   title: string
   flag: string
   items: [string, string][] // [icon, label] — 16 items, rendered as a 4x4 board
+  countryIds?: string[] // country-specific card; shown only if the trip visits it
+}
+
+// Cards for the active trip: country cards only for visited countries, plus all
+// the theme cards (which have no countryIds).
+export function tripCards(countryIds: string[]): BingoCard[] {
+  return BINGO_CARDS.filter(
+    (c) => !c.countryIds || c.countryIds.some((id) => countryIds.includes(id)),
+  )
 }
 
 export const BINGO_CARDS: BingoCard[] = [
@@ -10,6 +19,7 @@ export const BINGO_CARDS: BingoCard[] = [
     id: 'norge',
     title: 'Norge-bingo',
     flag: '🇳🇴',
+    countryIds: ['no'],
     items: [
       ['🫎', 'Elg-skilt'], ['🕳️', 'Tunnel'], ['💦', 'Foss eller elv'], ['🚐', 'Bobil'],
       ['🐑', 'Sau'], ['⛴️', 'Ferje'], ['🏔️', 'Fjell med snø'], ['🇳🇴', 'Norsk flagg'],
@@ -21,6 +31,7 @@ export const BINGO_CARDS: BingoCard[] = [
     id: 'danmark',
     title: 'Danmark-bingo',
     flag: '🇩🇰',
+    countryIds: ['dk'],
     items: [
       ['🌬️', 'Vindmølle'], ['🟩', 'Flatt landskap'], ['🌉', 'Lang bro'], ['🐷', 'Grisefarm'],
       ['🌾', 'Kornåker'], ['🚗', 'Bil med DK-skilt'], ['🇩🇰', 'Dansk flagg'], ['🚲', 'Syklist'],
@@ -32,6 +43,7 @@ export const BINGO_CARDS: BingoCard[] = [
     id: 'tyskland',
     title: 'Tyskland-bingo',
     flag: '🇩🇪',
+    countryIds: ['de'],
     items: [
       ['🛣️', 'Autobahn-skilt'], ['🚛', 'Stor lastebil'], ['🌬️', 'Vindmøllepark'], ['🏰', 'Borg/slott'],
       ['🚙', 'BMW/Audi/Merc.'], ['🚏', '«Ausfahrt»-skilt'], ['🅿️', 'Rasteplass'], ['🏍️', 'Motorsykkel'],
@@ -43,6 +55,7 @@ export const BINGO_CARDS: BingoCard[] = [
     id: 'alpene',
     title: 'Alpe-bingo (Sveits)',
     flag: '🇨🇭',
+    countryIds: ['ch'],
     items: [
       ['🏔️', 'Snøtopp'], ['🐄', 'Ku med bjelle'], ['🕳️', 'Lang tunnel'], ['🌉', 'Bro over en dal'],
       ['🏞️', 'Blå fjellsjø'], ['🏡', 'Trehytte'], ['🚂', 'Tog i fjellet'], ['🇨🇭', 'Sveitsisk flagg'],
@@ -54,11 +67,48 @@ export const BINGO_CARDS: BingoCard[] = [
     id: 'italia',
     title: 'Italia-bingo',
     flag: '🇮🇹',
+    countryIds: ['it'],
     items: [
       ['🌲', 'Sypress-tre'], ['🍇', 'Vinmark'], ['🇮🇹', 'Italiensk flagg'], ['🛵', 'Vespa'],
       ['🫒', 'Olivenlund'], ['🍕', 'Pizza-skilt'], ['🌴', 'Palme'], ['🏖️', 'GARDASJØEN!'],
       ['🍨', 'Gelato-sjappe'], ['⛪', 'Gammel kirke'], ['🏛️', 'Gamle ruiner'], ['🍋', 'Sitrontre'],
       ['🚗', 'Bil med I-skilt'], ['🌅', 'Solnedgang'], ['🏰', 'Borg på en høyde'], ['🌻', 'Solsikkeåker'],
+    ],
+  },
+  {
+    id: 'belgia',
+    title: 'Belgia-bingo',
+    flag: '🇧🇪',
+    countryIds: ['be'],
+    items: [
+      ['🍟', 'Pommes frites-bod'], ['🧇', 'Vaffel-skilt'], ['🍫', 'Sjokoladebutikk'], ['🇧🇪', 'Belgisk flagg'],
+      ['🚗', 'Bil med B-skilt'], ['🌾', 'Flatt jorde'], ['🏰', 'Gammelt torg'], ['🚲', 'Syklist'],
+      ['⛪', 'Kirketårn'], ['🌉', 'Kanal eller bro'], ['🚛', 'Lastebil'], ['🐄', 'Ku'],
+      ['🏭', 'Fabrikk'], ['🚄', 'Lyntog'], ['🌧️', 'Regn'], ['🅿️', 'Motorveiskilt'],
+    ],
+  },
+  {
+    id: 'luxembourg',
+    title: 'Luxembourg-bingo',
+    flag: '🇱🇺',
+    countryIds: ['lu'],
+    items: [
+      ['🇱🇺', 'Luxemburgsk flagg'], ['🚗', 'Bil med L-skilt'], ['🏰', 'Slott på en klippe'], ['🌉', 'Høy bro'],
+      ['🏦', 'Bank-bygg'], ['🌲', 'Skog (Ardennene)'], ['⛪', 'Kirke'], ['🚆', 'Gratis tog/buss'],
+      ['🏞️', 'Dyp elvedal'], ['🚙', 'Utenlandsk bil'], ['🌦️', 'Skyet vær'], ['🅿️', 'Bensinstasjon'],
+      ['🐄', 'Ku på beite'], ['🏘️', 'Landsby'], ['🌳', 'Grønn park'], ['💶', 'Euro-skilt'],
+    ],
+  },
+  {
+    id: 'frankrike',
+    title: 'Frankrike-bingo',
+    flag: '🇫🇷',
+    countryIds: ['fr'],
+    items: [
+      ['🥖', 'Baguette-bakeri'], ['🥐', 'Croissant-skilt'], ['🇫🇷', 'Fransk flagg'], ['🚗', 'Bil med F-skilt'],
+      ['🍇', 'Vinmark'], ['🧀', 'Ost-skilt'], ['🏰', 'Slott (château)'], ['🌻', 'Solsikkeåker'],
+      ['⛪', 'Katedral'], ['🌉', 'Elv med bro'], ['🚄', 'TGV-lyntog'], ['🅿️', 'Autoroute-skilt (péage)'],
+      ['🐄', 'Ku på jorde'], ['🚲', 'Syklist'], ['☀️', 'Sol'], ['🚧', 'Bomstasjon (péage)'],
     ],
   },
   {

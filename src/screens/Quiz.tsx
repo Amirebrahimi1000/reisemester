@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { QUIZ } from '../data/quiz'
+import { tripCategories } from '../data/quiz'
 import type { QuizCategory } from '../data/quiz'
 import { useStore } from '../store'
 
 export default function Quiz() {
-  const { state, answerQuiz } = useStore()
+  const { state, answerQuiz, routeCountries } = useStore()
+  const categories = tripCategories(routeCountries.map((c) => c.id))
   const [cat, setCat] = useState<QuizCategory | null>(null)
   const [idx, setIdx] = useState(0)
   const [picked, setPicked] = useState<number | null>(null)
@@ -17,7 +18,7 @@ export default function Quiz() {
         <p className="subtle" style={{ color: '#e0f2fe', margin: '0 4px 12px' }}>
           Velg et tema. Riktig svar gir ⭐⭐ – og du lærer noe morsomt!
         </p>
-        {QUIZ.map((c) => {
+        {categories.map((c) => {
           const done = c.questions.filter((q) => state.quiz[q.id]).length
           return (
             <button

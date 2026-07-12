@@ -49,8 +49,8 @@ export default function TripBuilder({ go }: { go: (s: Screen) => void }) {
         ➕ Lag ny tur
       </h2>
       <p className="subtle" style={{ color: '#e0f2fe', margin: '0 4px 12px' }}>
-        For voksne: gi turen et navn, skriv start og mål, og trykk landene i den
-        rekkefølgen dere kjører gjennom dem.
+        Gi turen et navn, skriv start og mål, og trykk landene i den rekkefølgen
+        dere kjører gjennom dem.
       </p>
 
       <div className="card">

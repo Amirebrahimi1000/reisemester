@@ -2,9 +2,11 @@ import { PLATES } from '../data/plates'
 import { useStore } from '../store'
 
 export default function Plates() {
-  const { state, togglePlate } = useStore()
-  const onRoute = PLATES.filter((p) => p.onRoute)
-  const bonus = PLATES.filter((p) => !p.onRoute)
+  const { state, togglePlate, routeCountries } = useStore()
+  // "On route" = the plate codes of the active trip's countries.
+  const routeCodes = new Set(routeCountries.map((c) => c.plate))
+  const onRoute = PLATES.filter((p) => routeCodes.has(p.code))
+  const bonus = PLATES.filter((p) => !routeCodes.has(p.code))
 
   const cell = (code: string, country: string, flag: string) => {
     const on = state.plates.includes(code)

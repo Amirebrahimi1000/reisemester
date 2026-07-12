@@ -56,7 +56,7 @@ export default function TripPicker({ go }: { go: (s: Screen) => void }) {
       })}
 
       <button className="primary" onClick={() => go('lagtur')}>
-        ➕ Lag ny tur (for voksne)
+        ➕ Lag ny tur
       </button>
     </>
   )

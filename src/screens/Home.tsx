@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import type { Screen } from '../App'
 import { useStore } from '../store'
-import { BINGO_CARDS } from '../data/bingo'
-import { QUIZ } from '../data/quiz'
+import { tripCards } from '../data/bingo'
+import { tripCategories } from '../data/quiz'
 import { MISSIONS } from '../data/missions'
 import { PLATES } from '../data/plates'
 import { haversineKm } from '../lib/distance'
@@ -23,7 +23,8 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
   const { state, stars, reset, goalStars, activeTrip, routeCountries } = useStore()
   const [dist, setDist] = useState('')
   const [distBusy, setDistBusy] = useState(false)
-  const badges = getBadges(state, stars, routeCountries.length, goalStars)
+  const countryIds = routeCountries.map((c) => c.id)
+  const badges = getBadges(state, stars, routeCountries.length, goalStars, countryIds)
   const earnedBadges = badges.filter((b) => b.done).length
 
   const howFar = () => {
@@ -48,10 +49,12 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     )
   }
 
-  const bingoCells = Object.values(state.bingo).reduce((n, a) => n + a.length, 0)
-  const totalBingo = BINGO_CARDS.reduce((n, c) => n + c.items.length, 0)
-  const quizDone = Object.values(state.quiz).filter(Boolean).length
-  const totalQuiz = QUIZ.reduce((n, c) => n + c.questions.length, 0)
+  const cards = tripCards(countryIds)
+  const cats = tripCategories(countryIds)
+  const bingoCells = cards.reduce((n, c) => n + (state.bingo[c.id]?.length ?? 0), 0)
+  const totalBingo = cards.reduce((n, c) => n + c.items.length, 0)
+  const quizDone = cats.reduce((n, c) => n + c.questions.filter((q) => state.quiz[q.id]).length, 0)
+  const totalQuiz = cats.reduce((n, c) => n + c.questions.length, 0)
 
   const counts: Record<string, string> = {
     bingo: `${bingoCells}/${totalBingo}`,
