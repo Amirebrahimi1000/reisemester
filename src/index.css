@@ -1500,6 +1500,7 @@ button {
 :root[data-theme='dark'] .route-btn,
 :root[data-theme='dark'] .badge-item,
 :root[data-theme='dark'] .plate,
+:root[data-theme='dark'] .trip-switch,
 :root[data-theme='dark'] .mcard.up {
   background: #334155;
   color: var(--ink);
