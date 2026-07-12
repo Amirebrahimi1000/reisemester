@@ -9,9 +9,11 @@ import { PLATES } from '../data/plates'
 const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
   { id: 'bingo', emoji: '🎯', name: 'Reisebingo', desc: 'Finn ting ut av bilvinduet' },
   { id: 'quiz', emoji: '❓', name: 'Quiz', desc: 'Spørsmål om landene' },
+  { id: 'flagg', emoji: '🚩', name: 'Gjett landet', desc: 'Kjenn igjen flaggene' },
   { id: 'land', emoji: '🌍', name: 'Grenseland', desc: 'Lås opp fakta om hvert land' },
   { id: 'oppdrag', emoji: '🏆', name: 'Oppdrag', desc: 'Morsomme utfordringer' },
   { id: 'skilt', emoji: '🚗', name: 'Skiltjakt', desc: 'Samle bilskilt fra Europa' },
+  { id: 'dagbok', emoji: '📔', name: 'Reisedagbok', desc: 'Skriv om turen din' },
 ]
 
 export default function Home({ go }: { go: (s: Screen) => void }) {
@@ -26,9 +28,11 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     home: '',
     bingo: `${bingoCells}/${totalBingo}`,
     quiz: `${quizDone}/${totalQuiz}`,
+    flagg: `${state.flags.length}/${PLATES.length}`,
     land: `${state.countries.length}/${COUNTRIES.length}`,
     oppdrag: `${state.missions.length}/${MISSIONS.length}`,
     skilt: `${state.plates.length}/${PLATES.length}`,
+    dagbok: `${state.journal.length} sider`,
   }
 
   const pct = Math.min(100, Math.round((stars / GOAL_STARS) * 100))

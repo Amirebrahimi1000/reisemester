@@ -565,11 +565,13 @@ button {
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  padding: 4px 8px;
+  padding: 4px 3px;
   border-radius: 12px;
   color: var(--muted);
   font-weight: 700;
-  font-size: 11px;
+  font-size: 10px;
+  flex: 1;
+  min-width: 0;
 }
 
 .tabbar button.active {
@@ -577,7 +579,7 @@ button {
 }
 
 .tabbar .tabemoji {
-  font-size: 22px;
+  font-size: 20px;
 }
 
 /* ---- Name intro ---------------------------------------------------------- */
@@ -638,4 +640,92 @@ button {
   font-size: 13px;
   text-decoration: underline;
   font-weight: 700;
+}
+
+/* ---- Flag game ----------------------------------------------------------- */
+.flag-big {
+  font-size: 96px;
+  line-height: 1.1;
+  margin: 4px 0 6px;
+}
+
+/* ---- Journal ------------------------------------------------------------- */
+.picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pick {
+  background: #f1f5f9;
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-size: 22px;
+  line-height: 1;
+  transition: transform 0.08s ease;
+}
+
+.pick:active {
+  transform: scale(0.9);
+}
+
+.pick.on {
+  background: #cffafe;
+  outline: 3px solid var(--lake);
+}
+
+.journal-input {
+  font-family: inherit;
+  font-size: 16px;
+  width: 100%;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px;
+  margin: 12px 0;
+  resize: vertical;
+  color: var(--ink);
+}
+
+.journal-input:focus {
+  outline: none;
+  border-color: var(--lake);
+}
+
+.journal-entry {
+  margin-top: 12px;
+}
+
+.journal-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.journal-flag {
+  font-size: 26px;
+}
+
+.journal-mood {
+  font-size: 24px;
+}
+
+.journal-date {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.journal-del {
+  margin-left: auto;
+  background: none;
+  font-size: 18px;
+  padding: 4px;
+}
+
+.journal-text {
+  margin: 8px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  white-space: pre-wrap;
 }

@@ -12,8 +12,8 @@ export interface Country {
   eat: string // a local food to try
 }
 
-// The route: Skien → ferge → Danmark → Tyskland → Sveits → (Østerrike/
-// Liechtenstein streifes) → Italia → Gardasjøen.
+// The route: Skien → ferge → Danmark → Tyskland → Belgia → Luxembourg
+// (overnatting) → Frankrike → Sveits → Liechtenstein → Italia → Gardasjøen.
 export const COUNTRIES: Country[] = [
   {
     id: 'no',
@@ -70,10 +70,64 @@ export const COUNTRIES: Country[] = [
     ],
   },
   {
+    id: 'be',
+    name: 'Belgia',
+    flag: '🇧🇪',
+    order: 3,
+    capital: 'Brussel',
+    language: 'Nederlandsk, fransk og tysk',
+    hello: 'Hallo! / Bonjour!',
+    helloTip: 'I nord sier man «hallo», i sør «bonjour» (bonsjur)',
+    currency: 'Euro (€)',
+    eat: 'Belgiske vafler eller pommes frites',
+    facts: [
+      'Pommes frites ble faktisk funnet opp i Belgia – ikke i Frankrike!',
+      'Tintin og Smurfene er tegneseriefigurer som kommer fra Belgia.',
+      'I Brussel står en berømt bitte liten statue av en gutt som tisser: «Manneken Pis».',
+      'Belgia er verdenskjent for sjokolade – du finner sjokoladebutikker overalt.',
+    ],
+  },
+  {
+    id: 'lu',
+    name: 'Luxembourg',
+    flag: '🇱🇺',
+    order: 4,
+    capital: 'Luxembourg by',
+    language: 'Luxemburgsk, fransk og tysk',
+    hello: 'Moien!',
+    helloTip: 'Uttales «moi-en» – hei på luxemburgsk',
+    currency: 'Euro (€)',
+    eat: 'Gromperekichelcher (sprø potetkaker)',
+    facts: [
+      'Luxembourg er et av verdens minste land – dere kjører gjennom det på under en time.',
+      'Her er ALL buss, trikk og tog helt gratis for alle – også for turister!',
+      'Hovedstaden er bygd på høye klipper med dype kløfter og gamle broer.',
+      'Landet styres av en storhertug – nesten som en konge, men med en annen tittel.',
+    ],
+  },
+  {
+    id: 'fr',
+    name: 'Frankrike',
+    flag: '🇫🇷',
+    order: 5,
+    capital: 'Paris',
+    language: 'Fransk',
+    hello: 'Bonjour!',
+    helloTip: 'Uttales «bonsjur» – god dag på fransk',
+    currency: 'Euro (€)',
+    eat: 'En croissant eller en fersk baguette',
+    facts: [
+      'I Paris står Eiffeltårnet, som er 330 meter høyt og bygd helt av jern.',
+      'I Frankrike lager de over 1000 forskjellige typer ost!',
+      'Tour de France er verdens mest kjente sykkelritt.',
+      'Fransk snakkes ikke bare i Frankrike, men i mange land over hele verden.',
+    ],
+  },
+  {
     id: 'ch',
     name: 'Sveits',
     flag: '🇨🇭',
-    order: 3,
+    order: 6,
     capital: 'Bern',
     language: 'Tysk, fransk og italiensk',
     hello: 'Grüezi!',
@@ -88,10 +142,28 @@ export const COUNTRIES: Country[] = [
     ],
   },
   {
+    id: 'li',
+    name: 'Liechtenstein',
+    flag: '🇱🇮',
+    order: 7,
+    capital: 'Vaduz',
+    language: 'Tysk',
+    hello: 'Hoi!',
+    helloTip: 'Uttales «hoi» – et uformelt hei',
+    currency: 'Sveitserfranc (CHF)',
+    eat: 'Käsknöpfle (ostepasta, litt som makaroni og ost)',
+    facts: [
+      'Liechtenstein er så lite at det får plass mellom Sveits og Østerrike.',
+      'Landet har ingen egen flyplass og bruker sveitsiske penger.',
+      'En ekte fyrste (prins) bor i et slott høyt over hovedstaden Vaduz.',
+      'Liechtenstein er et av få land i verden helt uten egen hær.',
+    ],
+  },
+  {
     id: 'it',
     name: 'Italia',
     flag: '🇮🇹',
-    order: 4,
+    order: 8,
     capital: 'Roma',
     language: 'Italiensk',
     hello: 'Ciao!',

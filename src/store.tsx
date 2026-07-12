@@ -8,10 +8,22 @@ export const POINTS = {
   country: 3,
   mission: 5,
   plate: 2,
+  flag: 2,
+  journal: 3,
 } as const
 
 // Total stars needed to "drive" all the way to Gardasjøen on the reise-o-meter.
-export const GOAL_STARS = 260
+// Chosen so the car clearly moves and can realistically arrive during the trip
+// without needing 100 % completion of everything.
+export const GOAL_STARS = 180
+
+export interface JournalEntry {
+  id: string
+  date: string
+  country: string // flag emoji of the country that day (or '')
+  mood: string // emoji
+  text: string
+}
 
 interface SaveState {
   playerName: string
@@ -20,6 +32,8 @@ interface SaveState {
   countries: string[] // unlocked country ids
   missions: string[] // completed mission ids
   plates: string[] // collected plate codes
+  flags: string[] // plate codes guessed correctly in the flag game
+  journal: JournalEntry[] // travel journal entries
 }
 
 const EMPTY: SaveState = {
@@ -29,6 +43,8 @@ const EMPTY: SaveState = {
   countries: [],
   missions: [],
   plates: [],
+  flags: [],
+  journal: [],
 }
 
 const STORAGE_KEY = 'gardaturen.save.v1'
@@ -52,6 +68,9 @@ interface Store {
   unlockCountry: (id: string) => void
   toggleMission: (id: string) => void
   togglePlate: (code: string) => void
+  guessFlag: (code: string, correct: boolean) => void
+  addJournal: (entry: Omit<JournalEntry, 'id' | 'date'>) => void
+  deleteJournal: (id: string) => void
   reset: () => void
 }
 
@@ -106,6 +125,24 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     }))
   }, [])
 
+  const guessFlag = useCallback((code: string, correct: boolean) => {
+    if (!correct) return
+    setState((s) => (s.flags.includes(code) ? s : { ...s, flags: [...s.flags, code] }))
+  }, [])
+
+  const addJournal = useCallback((entry: Omit<JournalEntry, 'id' | 'date'>) => {
+    setState((s) => {
+      const now = new Date()
+      const id = `${now.getTime()}-${s.journal.length}`
+      const date = now.toLocaleDateString('nb-NO', { weekday: 'long', day: 'numeric', month: 'long' })
+      return { ...s, journal: [{ id, date, ...entry }, ...s.journal] }
+    })
+  }, [])
+
+  const deleteJournal = useCallback((id: string) => {
+    setState((s) => ({ ...s, journal: s.journal.filter((e) => e.id !== id) }))
+  }, [])
+
   const reset = useCallback(() => {
     setState((s) => ({ ...EMPTY, playerName: s.playerName }))
   }, [])
@@ -118,7 +155,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       quizCorrect * POINTS.quizCorrect +
       state.countries.length * POINTS.country +
       state.missions.length * POINTS.mission +
-      state.plates.length * POINTS.plate
+      state.plates.length * POINTS.plate +
+      state.flags.length * POINTS.flag +
+      state.journal.length * POINTS.journal
     )
   }, [state])
 
@@ -131,6 +170,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     unlockCountry,
     toggleMission,
     togglePlate,
+    guessFlag,
+    addJournal,
+    deleteJournal,
     reset,
   }
 

@@ -230,6 +230,48 @@ export const QUIZ: QuizCategory[] = [
     ],
   },
   {
+    id: 'benelux',
+    title: 'Belgia, Luxembourg & Frankrike',
+    flag: '🧇',
+    questions: [
+      {
+        id: 'bx1',
+        q: 'Hvilken kjent matbit ble faktisk funnet opp i Belgia?',
+        options: ['Sushi', 'Pommes frites', 'Tacos', 'Pizza'],
+        answer: 1,
+        fact: 'Belgierne er stolte av pommes frites – mange sier de er bedre enn de franske!',
+      },
+      {
+        id: 'bx2',
+        q: 'Hva er ekstra kult med bussene og togene i Luxembourg?',
+        options: ['De kjører under vann', 'De er helt gratis', 'De flyr', 'De er laget av sjokolade'],
+        answer: 1,
+        fact: 'Luxembourg var det første landet i verden som gjorde all kollektivtransport gratis.',
+      },
+      {
+        id: 'bx3',
+        q: 'Hva heter det berømte jerntårnet i Paris?',
+        options: ['Big Ben', 'Eiffeltårnet', 'Det skjeve tårn', 'Frihetsgudinnen'],
+        answer: 1,
+        fact: 'Eiffeltårnet er 330 meter høyt. Om sommeren «vokser» det litt fordi jernet utvider seg i varmen!',
+      },
+      {
+        id: 'bx4',
+        q: 'Luxembourg er et av verdens …?',
+        options: ['Største land', 'Minste land', 'Kaldeste land', 'Varmeste land'],
+        answer: 1,
+        fact: 'Dere kan kjøre gjennom hele Luxembourg på under en time – men dere skal overnatte der!',
+      },
+      {
+        id: 'bx5',
+        q: 'Hvor mange typer ost lager de i Frankrike?',
+        options: ['Cirka 10', 'Cirka 100', 'Over 1000', 'Bare én'],
+        answer: 2,
+        fact: 'En fransk president sa en gang at det er umulig å styre et land med over 1000 oster!',
+      },
+    ],
+  },
+  {
     id: 'blandet',
     title: 'Blandet på veien',
     flag: '🚗',
