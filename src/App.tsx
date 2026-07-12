@@ -8,9 +8,19 @@ import Missions from './screens/Missions'
 import Plates from './screens/Plates'
 import Games from './screens/Games'
 import Journal from './screens/Journal'
+import Merker from './screens/Merker'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
-export type Screen = 'home' | 'bingo' | 'quiz' | 'land' | 'oppdrag' | 'skilt' | 'spill' | 'dagbok'
+export type Screen =
+  | 'home'
+  | 'bingo'
+  | 'quiz'
+  | 'land'
+  | 'oppdrag'
+  | 'skilt'
+  | 'spill'
+  | 'dagbok'
+  | 'merker'
 
 const TABS: { id: Screen; label: string; emoji: string }[] = [
   { id: 'home', label: 'Hjem', emoji: '🏠' },
@@ -115,6 +125,7 @@ function Shell() {
         {screen === 'skilt' && <Plates />}
         {screen === 'spill' && <Games />}
         {screen === 'dagbok' && <Journal />}
+        {screen === 'merker' && <Merker />}
       </ErrorBoundary>
 
       <nav className="tabbar">

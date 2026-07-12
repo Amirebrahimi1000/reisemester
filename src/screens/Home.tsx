@@ -7,8 +7,7 @@ import { COUNTRIES } from '../data/countries'
 import { MISSIONS } from '../data/missions'
 import { PLATES } from '../data/plates'
 import { GARDA, haversineKm } from '../lib/distance'
-import { Badges } from '../components/Badges'
-import { Diploma } from '../components/Diploma'
+import { getBadges } from '../components/Badges'
 
 const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
   { id: 'bingo', emoji: '🎯', name: 'Reisebingo', desc: 'Finn ting ut av bilvinduet' },
@@ -18,13 +17,15 @@ const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
   { id: 'oppdrag', emoji: '🏆', name: 'Oppdrag', desc: 'Morsomme utfordringer' },
   { id: 'skilt', emoji: '🚗', name: 'Skiltjakt', desc: 'Samle bilskilt fra Europa' },
   { id: 'dagbok', emoji: '📔', name: 'Reisedagbok', desc: 'Skriv om turen din' },
+  { id: 'merker', emoji: '🏅', name: 'Merker & diplom', desc: 'Se merker og reisediplom' },
 ]
 
 export default function Home({ go }: { go: (s: Screen) => void }) {
   const { state, stars, reset } = useStore()
   const [dist, setDist] = useState('')
   const [distBusy, setDistBusy] = useState(false)
-  const [showDiploma, setShowDiploma] = useState(false)
+  const badges = getBadges(state, stars)
+  const earnedBadges = badges.filter((b) => b.done).length
 
   const howFar = () => {
     if (!('geolocation' in navigator)) {
@@ -62,6 +63,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     oppdrag: `${state.missions.length}/${MISSIONS.length}`,
     skilt: `${state.plates.length}/${PLATES.length}`,
     dagbok: `${state.journal.length} sider`,
+    merker: `${earnedBadges}/${badges.length}`,
   }
 
   const pct = Math.min(100, Math.round((stars / GOAL_STARS) * 100))
@@ -116,12 +118,6 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
           </button>
         ))}
       </div>
-
-      <Badges />
-      <button className="primary" onClick={() => setShowDiploma(true)}>
-        🎓 Vis reisediplom
-      </button>
-      {showDiploma && <Diploma onClose={() => setShowDiploma(false)} />}
 
       <button
         className="reset-link"
