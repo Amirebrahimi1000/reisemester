@@ -53,3 +53,34 @@ export function countryShape(id: string): { path: string; bbox: BBox } | null {
   if (!loc) return null
   return { path: loc.path, bbox: pathBBox(loc.path) }
 }
+
+// ---- Country name labels for the map ---------------------------------------
+const CROP = { x: 449.5, y: 161.1, w: 124.2, h: 205.9 }
+
+const NEIGHBOUR_NAMES: Record<string, string> = {
+  no: 'Norge', se: 'Sverige', fi: 'Finland', dk: 'Danmark', de: 'Tyskland',
+  nl: 'Nederl.', be: 'Belgia', fr: 'Frankrike', ch: 'Sveits', at: 'Østerrike',
+  it: 'Italia', gb: 'Storbr.', ie: 'Irland', es: 'Spania', pl: 'Polen',
+  cz: 'Tsjekkia', sk: 'Slovakia', hu: 'Ungarn', si: 'Slovenia', hr: 'Kroatia',
+}
+
+// Precompute label positions (bbox centre) for countries visible in the crop.
+// Tiny countries are skipped to avoid clutter (they still get the red pin when
+// they are the highlighted country).
+export const LABELS = REGIONS.filter((r) => NEIGHBOUR_NAMES[r.id])
+  .map((r) => {
+    const b = pathBBox(r.path)
+    return {
+      id: r.id,
+      name: NEIGHBOUR_NAMES[r.id],
+      x: (b.minX + b.maxX) / 2,
+      y: (b.minY + b.maxY) / 2,
+      area: (b.maxX - b.minX) * (b.maxY - b.minY),
+    }
+  })
+  .filter(
+    (l) =>
+      l.area > 8 &&
+      l.x >= CROP.x && l.x <= CROP.x + CROP.w &&
+      l.y >= CROP.y && l.y <= CROP.y + CROP.h,
+  )

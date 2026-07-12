@@ -1,5 +1,5 @@
 import { byOrder } from '../data/countries'
-import { EUROPE_VIEWBOX, REGIONS, countryShape } from '../data/europeMap'
+import { EUROPE_VIEWBOX, LABELS, REGIONS, countryShape } from '../data/europeMap'
 
 const [vx, vy, vw, vh] = EUROPE_VIEWBOX.split(' ').map(Number)
 
@@ -31,6 +31,28 @@ export function CountryMap({ id }: { id: string }) {
           strokeLinejoin="round"
         />
       ))}
+      {/* neighbour names */}
+      {LABELS.map((l) => {
+        const active = l.id === id
+        return (
+          <text
+            key={l.id}
+            x={l.x}
+            y={active ? l.y - 6 : l.y}
+            textAnchor="middle"
+            fontSize={active ? 5.5 : 4.4}
+            fontWeight={active ? 800 : 600}
+            fill={active ? '#065f46' : '#334155'}
+            stroke="#ffffff"
+            strokeWidth={active ? 1.5 : 1.15}
+            strokeLinejoin="round"
+            style={{ paintOrder: 'stroke' }}
+          >
+            {l.name}
+          </text>
+        )
+      })}
+
       {/* "you are here" pin */}
       {shape && (
         <>

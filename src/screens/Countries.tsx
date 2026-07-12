@@ -82,20 +82,23 @@ export default function Countries() {
 
             {open && (
               <div className="pop">
+                <figure className="visual visual-map">
+                  <CountryMap id={c.id} />
+                  <figcaption>Her ligger {c.name} i Europa</figcaption>
+                </figure>
                 <div className="country-visuals">
-                  <figure className="visual">
-                    <CountryMap id={c.id} />
-                    <figcaption>Her i Europa</figcaption>
-                  </figure>
                   <figure className="visual">
                     <CountrySilhouette id={c.id} />
                     <figcaption>Landets form</figcaption>
                   </figure>
-                </div>
-                <div className="emoji-scene">
-                  {(SCENES[c.id] ?? []).map((e, i) => (
-                    <span key={i}>{e}</span>
-                  ))}
+                  <figure className="visual">
+                    <div className="emoji-scene">
+                      {(SCENES[c.id] ?? []).map((e, i) => (
+                        <span key={i}>{e}</span>
+                      ))}
+                    </div>
+                    <figcaption>Kjent for</figcaption>
+                  </figure>
                 </div>
                 <div className="info-row">
                   <span className="pill">
