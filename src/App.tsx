@@ -9,6 +9,8 @@ import Plates from './screens/Plates'
 import Games from './screens/Games'
 import Journal from './screens/Journal'
 import Merker from './screens/Merker'
+import TripPicker from './screens/TripPicker'
+import TripBuilder from './screens/TripBuilder'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
 export type Screen =
@@ -21,6 +23,8 @@ export type Screen =
   | 'spill'
   | 'dagbok'
   | 'merker'
+  | 'velgtur'
+  | 'lagtur'
 
 const TABS: { id: Screen; label: string; emoji: string }[] = [
   { id: 'home', label: 'Hjem', emoji: '🏠' },
@@ -126,6 +130,8 @@ function Shell() {
         {screen === 'spill' && <Games />}
         {screen === 'dagbok' && <Journal />}
         {screen === 'merker' && <Merker onBack={() => setScreen('home')} />}
+        {screen === 'velgtur' && <TripPicker go={setScreen} />}
+        {screen === 'lagtur' && <TripBuilder go={setScreen} />}
       </ErrorBoundary>
 
       <nav className="tabbar">

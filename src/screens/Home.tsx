@@ -1,12 +1,11 @@
 import { useState } from 'react'
 import type { Screen } from '../App'
-import { GOAL_STARS, useStore } from '../store'
+import { useStore } from '../store'
 import { BINGO_CARDS } from '../data/bingo'
 import { QUIZ } from '../data/quiz'
-import { COUNTRIES } from '../data/countries'
 import { MISSIONS } from '../data/missions'
 import { PLATES } from '../data/plates'
-import { GARDA, haversineKm } from '../lib/distance'
+import { haversineKm } from '../lib/distance'
 import { getBadges } from '../components/Badges'
 
 const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
@@ -21,10 +20,10 @@ const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
 ]
 
 export default function Home({ go }: { go: (s: Screen) => void }) {
-  const { state, stars, reset } = useStore()
+  const { state, stars, reset, goalStars, activeTrip, routeCountries } = useStore()
   const [dist, setDist] = useState('')
   const [distBusy, setDistBusy] = useState(false)
-  const badges = getBadges(state, stars)
+  const badges = getBadges(state, stars, routeCountries.length, goalStars)
   const earnedBadges = badges.filter((b) => b.done).length
 
   const howFar = () => {
@@ -37,9 +36,9 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setDistBusy(false)
-        const km = haversineKm(pos.coords.latitude, pos.coords.longitude, GARDA.lat, GARDA.lon)
-        if (km < 3) setDist('🎉 Dere er nesten framme ved Gardasjøen!')
-        else setDist(`📏 Ca. ${Math.round(km).toLocaleString('nb-NO')} km igjen til Gardasjøen`)
+        const km = haversineKm(pos.coords.latitude, pos.coords.longitude, activeTrip.to.lat, activeTrip.to.lon)
+        if (km < 3) setDist(`🎉 Dere er nesten framme ved ${activeTrip.to.name}!`)
+        else setDist(`📏 Ca. ${Math.round(km).toLocaleString('nb-NO')} km igjen til ${activeTrip.to.name}`)
       },
       () => {
         setDistBusy(false)
@@ -54,26 +53,30 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
   const quizDone = Object.values(state.quiz).filter(Boolean).length
   const totalQuiz = QUIZ.reduce((n, c) => n + c.questions.length, 0)
 
-  const counts: Record<Screen, string> = {
-    home: '',
+  const counts: Record<string, string> = {
     bingo: `${bingoCells}/${totalBingo}`,
     quiz: `${quizDone}/${totalQuiz}`,
     spill: '9 spill',
-    land: `${state.countries.length}/${COUNTRIES.length}`,
+    land: `${state.countries.length}/${routeCountries.length}`,
     oppdrag: `${state.missions.length}/${MISSIONS.length}`,
     skilt: `${state.plates.length}/${PLATES.length}`,
     dagbok: `${state.journal.length} sider`,
     merker: `${earnedBadges}/${badges.length}`,
   }
 
-  const pct = Math.min(100, Math.round((stars / GOAL_STARS) * 100))
+  const pct = Math.min(100, Math.round((stars / goalStars) * 100))
 
   return (
     <>
       <div className="roadmeter">
         <h2>Hei {state.playerName}! 👋</h2>
-        <p className="subtle" style={{ margin: '2px 0 4px' }}>
-          Reise-o-meteret: samle stjerner så kjører bilen nærmere Gardasjøen!
+
+        <button className="trip-switch" onClick={() => go('velgtur')}>
+          {activeTrip.emoji} {activeTrip.name} <span className="trip-switch-hint">🗺️ Bytt tur</span>
+        </button>
+
+        <p className="subtle" style={{ margin: '8px 0 4px' }}>
+          Reise-o-meteret: samle stjerner så kjører bilen nærmere {activeTrip.to.name}!
         </p>
         <div className="track">
           <div className="track-fill" style={{ width: `${pct}%` }} />
@@ -82,19 +85,19 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
           </div>
         </div>
         <div className="track-ends">
-          <span>🏁 Skien</span>
-          <span>Gardasjøen 🏖️</span>
+          <span>🏁 {activeTrip.from.name}</span>
+          <span>{activeTrip.to.name} 🏖️</span>
         </div>
         <div className="progresstext">
-          {pct < 100 ? `${pct}% framme – ⭐ ${stars} stjerner` : '🎉 Framme ved Gardasjøen!'}
+          {pct < 100 ? `${pct}% framme – ⭐ ${stars} stjerner` : `🎉 Framme ved ${activeTrip.to.name}!`}
         </div>
 
         <div className="visited">
           <div className="visited-label">
-            🌍 Vi har vært i <b>{state.countries.length}</b> av {COUNTRIES.length} land
+            🌍 Vi har vært i <b>{state.countries.length}</b> av {routeCountries.length} land
           </div>
           <div className="visited-flags">
-            {COUNTRIES.map((c) => (
+            {routeCountries.map((c) => (
               <span key={c.id} className={state.countries.includes(c.id) ? '' : 'flag-dim'}>
                 {c.flag}
               </span>
@@ -103,7 +106,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         </div>
 
         <button className="farbtn" onClick={howFar} disabled={distBusy}>
-          {distBusy ? '📡 Måler …' : '📏 Hvor langt igjen til Gardasjøen?'}
+          {distBusy ? '📡 Måler …' : `📏 Hvor langt igjen til ${activeTrip.to.name}?`}
         </button>
         {dist && <div className="far-msg">{dist}</div>}
       </div>
@@ -124,13 +127,13 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
         onClick={() => {
           if (
             confirm(
-              'Nullstille stjerner og spillframgang for en ny tur (f.eks. hjemturen)?\n\nReisedagboka beholdes – den forsvinner ikke.',
+              `Nullstille stjerner og spillframgang for «${activeTrip.name}»?\n\nReisedagboka for denne turen beholdes.`,
             )
           )
             reset()
         }}
       >
-        Nullstill for ny tur
+        Nullstill denne turen
       </button>
     </>
   )

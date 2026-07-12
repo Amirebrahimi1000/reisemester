@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { COUNTRIES } from '../data/countries'
 import { useStore } from '../store'
 import type { JournalEntry } from '../store'
 
@@ -27,11 +26,11 @@ function buildText(entries: JournalEntry[], name: string): string {
 }
 
 export default function Journal() {
-  const { state, addJournal, deleteJournal } = useStore()
+  const { state, addJournal, deleteJournal, routeCountries } = useStore()
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
   const [mood, setMood] = useState('😀')
-  const [country, setCountry] = useState('🇳🇴')
+  const [country, setCountry] = useState(routeCountries[0]?.flag ?? '🇳🇴')
   const [prompt] = useState(() => PROMPTS[Math.floor(Math.random() * PROMPTS.length)])
   const [copied, setCopied] = useState(false)
 
@@ -115,7 +114,7 @@ export default function Journal() {
             Hvilket land er dere i?
           </div>
           <div className="picker">
-            {COUNTRIES.map((c) => (
+            {routeCountries.map((c) => (
               <button
                 key={c.id}
                 className={`pick ${country === c.flag ? 'on' : ''}`}

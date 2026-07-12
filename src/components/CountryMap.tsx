@@ -1,26 +1,28 @@
-import { byOrder } from '../data/countries'
-import { EUROPE_VIEWBOX, LABELS, REGIONS, countryShape } from '../data/europeMap'
+import { useMemo } from 'react'
+import { getCountry } from '../data/countryDB'
+import { REGIONS, computeCrop, countryShape, labelsInCrop } from '../data/europeMap'
+import { useStore } from '../store'
 
-const [vx, vy, vw, vh] = EUROPE_VIEWBOX.split(' ').map(Number)
-
-// A small offline locator map: real European borders, with the given country
-// filled and pinned so a child can see where it sits among its neighbours.
+// Offline locator map: real European borders, framed on the active trip's
+// countries, with the given country filled and pinned.
 export function CountryMap({ id }: { id: string }) {
-  const country = byOrder.find((c) => c.id === id)
+  const { routeCountries } = useStore()
+  const crop = useMemo(() => computeCrop(routeCountries.map((c) => c.id)), [routeCountries])
+  const labels = useMemo(() => labelsInCrop(crop), [crop])
+
+  const country = getCountry(id)
   const shape = countryShape(id)
   const cx = shape ? (shape.bbox.minX + shape.bbox.maxX) / 2 : 0
   const cy = shape ? (shape.bbox.minY + shape.bbox.maxY) / 2 : 0
 
   return (
     <svg
-      viewBox={EUROPE_VIEWBOX}
+      viewBox={crop.viewBox}
       className="country-map"
       role="img"
       aria-label={`Kart over Europa der ${country?.name ?? ''} er markert`}
     >
-      {/* sea */}
-      <rect x={vx} y={vy} width={vw} height={vh} fill="#a5d8ef" />
-      {/* land + borders */}
+      <rect x={crop.x} y={crop.y} width={crop.w} height={crop.h} fill="#a5d8ef" />
       {REGIONS.map((r) => (
         <path
           key={r.id}
@@ -31,8 +33,7 @@ export function CountryMap({ id }: { id: string }) {
           strokeLinejoin="round"
         />
       ))}
-      {/* neighbour names */}
-      {LABELS.map((l) => {
+      {labels.map((l) => {
         const active = l.id === id
         return (
           <text
@@ -52,8 +53,6 @@ export function CountryMap({ id }: { id: string }) {
           </text>
         )
       })}
-
-      {/* "you are here" pin */}
       {shape && (
         <>
           <circle cx={cx} cy={cy} r={3.4} fill="#dc2626" stroke="#fff" strokeWidth={1.1} />

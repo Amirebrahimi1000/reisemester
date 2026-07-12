@@ -1,14 +1,13 @@
 import { useStore } from '../store'
-import { COUNTRIES } from '../data/countries'
 
 export function Diploma({ onClose }: { onClose: () => void }) {
-  const { state, stars } = useStore()
+  const { state, stars, routeCountries, activeTrip } = useStore()
   const dateStr = new Date().toLocaleDateString('nb-NO', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
   })
-  const visitedFlags = COUNTRIES.filter((c) => state.countries.includes(c.id)).map((c) => c.flag)
+  const visitedFlags = routeCountries.filter((c) => state.countries.includes(c.id)).map((c) => c.flag)
 
   return (
     <div className="diploma-overlay" onClick={onClose}>
@@ -18,7 +17,7 @@ export function Diploma({ onClose }: { onClose: () => void }) {
         <p className="diploma-sub">Reisemester 🚗</p>
         <p className="diploma-name">{state.playerName || 'Reisende'}</p>
         <p className="diploma-text">
-          har vært på biltur fra 🏁 Skien til 🏖️ Gardasjøen!
+          har vært på biltur fra 🏁 {activeTrip.from.name} til 🏖️ {activeTrip.to.name}!
         </p>
         <div className="diploma-stats">
           <div>

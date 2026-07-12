@@ -1,9 +1,8 @@
 import { useState } from 'react'
 import { ModePicker } from '../components/ModePicker'
-import { COUNTRIES } from '../data/countries'
+import type { Country } from '../data/countryDB'
 import { useStore } from '../store'
 
-const CAPITALS = COUNTRIES.map((c) => c.capital)
 const ROUNDS_2P = 8
 
 function shuffle<T>(arr: T[]): T[] {
@@ -15,15 +14,19 @@ function shuffle<T>(arr: T[]): T[] {
   return a
 }
 
-function pickRound() {
-  const country = COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)]
-  const wrong = shuffle(CAPITALS.filter((c) => c !== country.capital)).slice(0, 3)
-  const options = shuffle([country.capital, ...wrong])
-  return { country, options }
+function makePickRound(countries: Country[]) {
+  const capitals = countries.map((c) => c.capital)
+  return () => {
+    const country = countries[Math.floor(Math.random() * countries.length)]
+    const wrong = shuffle(capitals.filter((c) => c !== country.capital)).slice(0, 3)
+    const options = shuffle([country.capital, ...wrong])
+    return { country, options }
+  }
 }
 
 export default function CapitalGame() {
-  const { unlockAchievement } = useStore()
+  const { unlockAchievement, routeCountries } = useStore()
+  const pickRound = makePickRound(routeCountries)
   const [players, setPlayers] = useState<1 | 2 | null>(null)
   const [round, setRound] = useState(pickRound)
   const [picked, setPicked] = useState<string | null>(null)

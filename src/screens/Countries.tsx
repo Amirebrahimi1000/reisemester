@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { byOrder } from '../data/countries'
 import { useStore } from '../store'
 import { CountryMap } from '../components/CountryMap'
 import { CountrySilhouette } from '../components/CountrySilhouette'
@@ -21,7 +20,7 @@ const SCENES: Record<string, string[]> = {
 }
 
 export default function Countries() {
-  const { state, unlockCountry, unlockAchievement } = useStore()
+  const { state, unlockCountry, unlockAchievement, routeCountries } = useStore()
   const [openId, setOpenId] = useState<string | null>(null)
   const [gpsBusy, setGpsBusy] = useState(false)
   const [gpsMsg, setGpsMsg] = useState('')
@@ -36,8 +35,12 @@ export default function Countries() {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         setGpsBusy(false)
-        const id = detectCountry(pos.coords.latitude, pos.coords.longitude)
-        const country = id ? byOrder.find((c) => c.id === id) : null
+        const id = detectCountry(
+          pos.coords.latitude,
+          pos.coords.longitude,
+          routeCountries.map((c) => c.id),
+        )
+        const country = id ? routeCountries.find((c) => c.id === id) : null
         if (country) {
           unlockCountry(country.id)
           unlockAchievement(`gps-${country.id}`) // one-time bonus for a real check-in
@@ -74,7 +77,7 @@ export default function Countries() {
       </button>
       {gpsMsg && <div className="gps-msg">{gpsMsg}</div>}
 
-      {byOrder.map((c) => {
+      {routeCountries.map((c) => {
         const unlocked = state.countries.includes(c.id)
         const open = openId === c.id
 

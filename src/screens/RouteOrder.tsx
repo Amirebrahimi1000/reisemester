@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { byOrder } from '../data/countries'
 import { useStore } from '../store'
+import type { Country } from '../data/countryDB'
 
 function shuffled<T>(arr: T[]): T[] {
   const a = [...arr]
@@ -12,21 +12,22 @@ function shuffled<T>(arr: T[]): T[] {
 }
 
 export default function RouteOrder() {
-  const { unlockAchievement } = useStore()
-  const [placed, setPlaced] = useState<string[]>([]) // country ids in chosen order
+  const { unlockAchievement, routeCountries, activeTrip } = useStore()
+  const order: Country[] = routeCountries
+  const [placed, setPlaced] = useState<string[]>([])
   const [wrongId, setWrongId] = useState<string | null>(null)
-  const [pool, setPool] = useState(() => shuffled(byOrder))
+  const [pool, setPool] = useState(() => shuffled(order))
 
-  const nextExpected = byOrder[placed.length]
-  const done = placed.length === byOrder.length
+  const done = placed.length === order.length
+  const nextExpected = order[placed.length]
 
   const tap = (id: string) => {
-    if (placed.includes(id)) return
+    if (placed.includes(id) || !nextExpected) return
     if (id === nextExpected.id) {
       const np = [...placed, id]
       setPlaced(np)
       setWrongId(null)
-      if (np.length === byOrder.length) unlockAchievement('reiserute')
+      if (np.length === order.length) unlockAchievement('reiserute')
     } else {
       setWrongId(id)
       setTimeout(() => setWrongId(null), 500)
@@ -36,21 +37,21 @@ export default function RouteOrder() {
   const restart = () => {
     setPlaced([])
     setWrongId(null)
-    setPool(shuffled(byOrder))
+    setPool(shuffled(order))
   }
 
   return (
     <div className="card">
       <p style={{ fontWeight: 800, margin: '0 0 4px' }}>🗺️ Reiseruta</p>
       <p className="subtle" style={{ marginTop: 0 }}>
-        Trykk landene i riktig rekkefølge – slik dere kjører fra Skien til Gardasjøen!
+        Trykk landene i riktig rekkefølge – slik dere kjører fra {activeTrip.from.name} til{' '}
+        {activeTrip.to.name}!
       </p>
 
-      {/* Progress: chosen route so far */}
       <div className="route-progress">
         🏁
         {placed.map((id) => {
-          const c = byOrder.find((x) => x.id === id)!
+          const c = order.find((x) => x.id === id)!
           return <span key={id}> → {c.flag}</span>
         })}
         {!done && <span className="route-next"> → ?</span>}

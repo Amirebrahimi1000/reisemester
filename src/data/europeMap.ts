@@ -7,14 +7,8 @@ export interface BBox {
   maxY: number
 }
 
-// Crop of the world map (viewBox 0 0 1010 666) that frames the route countries
-// from Norway down to Italy, with neighbours visible for context.
-export const EUROPE_VIEWBOX = '449.5 161.1 124.2 205.9'
-
-// Pre-extracted European country paths (see europePaths.json) – a small offline
-// subset of the world map, drawn for geographic context.
+// Pre-extracted European country paths (offline subset of the world map).
 export const REGIONS: { id: string; path: string }[] = europe.regions
-
 const byId = Object.fromEntries(REGIONS.map((r) => [r.id, r]))
 
 // Minimal SVG path point tracker – good enough for a bounding box.
@@ -46,41 +40,87 @@ function pathBBox(d: string): BBox {
   return { minX, minY, maxX, maxY }
 }
 
-// Route-country id (our ids match the map ids) -> path + bbox, for the pin
-// position and the standalone silhouette.
+// Precompute bbox/centroid/area for every region once.
+interface RegionInfo {
+  id: string
+  bbox: BBox
+  cx: number
+  cy: number
+  area: number
+}
+const INFO: Record<string, RegionInfo> = {}
+for (const r of REGIONS) {
+  const b = pathBBox(r.path)
+  INFO[r.id] = { id: r.id, bbox: b, cx: (b.minX + b.maxX) / 2, cy: (b.minY + b.maxY) / 2, area: (b.maxX - b.minX) * (b.maxY - b.minY) }
+}
+
 export function countryShape(id: string): { path: string; bbox: BBox } | null {
   const loc = byId[id]
   if (!loc) return null
-  return { path: loc.path, bbox: pathBBox(loc.path) }
+  return { path: loc.path, bbox: INFO[id].bbox }
 }
 
-// ---- Country name labels for the map ---------------------------------------
-const CROP = { x: 449.5, y: 161.1, w: 124.2, h: 205.9 }
-
-const NEIGHBOUR_NAMES: Record<string, string> = {
+// Norwegian names for map labels (short forms for the tiny ones).
+const NAMES: Record<string, string> = {
   no: 'Norge', se: 'Sverige', fi: 'Finland', dk: 'Danmark', de: 'Tyskland',
-  nl: 'Nederl.', be: 'Belgia', fr: 'Frankrike', ch: 'Sveits', at: 'Østerrike',
-  it: 'Italia', gb: 'Storbr.', ie: 'Irland', es: 'Spania', pl: 'Polen',
-  cz: 'Tsjekkia', sk: 'Slovakia', hu: 'Ungarn', si: 'Slovenia', hr: 'Kroatia',
+  nl: 'Nederl.', be: 'Belgia', lu: 'Lux.', fr: 'Frankrike', ch: 'Sveits',
+  li: 'Liecht.', at: 'Østerrike', it: 'Italia', gb: 'Storbr.', ie: 'Irland',
+  es: 'Spania', pt: 'Portugal', pl: 'Polen', cz: 'Tsjekkia', sk: 'Slovakia',
+  hu: 'Ungarn', si: 'Slovenia', hr: 'Kroatia', ba: 'Bosnia', rs: 'Serbia',
+  me: 'Monten.', al: 'Albania', mk: 'N-Maked.', gr: 'Hellas', ro: 'Romania',
+  bg: 'Bulgaria', ee: 'Estland', lv: 'Latvia', lt: 'Litauen', by: 'Hviteruss.',
+  ua: 'Ukraina', md: 'Moldova', is: 'Island', ma: 'Marokko', dz: 'Algerie',
+  tn: 'Tunisia',
 }
 
-// Precompute label positions (bbox centre) for countries visible in the crop.
-// Tiny countries are skipped to avoid clutter (they still get the red pin when
-// they are the highlighted country).
-export const LABELS = REGIONS.filter((r) => NEIGHBOUR_NAMES[r.id])
-  .map((r) => {
-    const b = pathBBox(r.path)
-    return {
-      id: r.id,
-      name: NEIGHBOUR_NAMES[r.id],
-      x: (b.minX + b.maxX) / 2,
-      y: (b.minY + b.maxY) / 2,
-      area: (b.maxX - b.minX) * (b.maxY - b.minY),
+export interface Crop {
+  viewBox: string
+  x: number
+  y: number
+  w: number
+  h: number
+}
+
+// A map crop that frames the given countries, with neighbours around them.
+export function computeCrop(countryIds: string[]): Crop {
+  const infos = countryIds.map((id) => INFO[id]).filter(Boolean)
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  if (infos.length === 0) {
+    // Fallback: most of Europe.
+    minX = 450; minY = 160; maxX = 574; maxY = 367
+  } else {
+    for (const info of infos) {
+      minX = Math.min(minX, info.bbox.minX); minY = Math.min(minY, info.bbox.minY)
+      maxX = Math.max(maxX, info.bbox.maxX); maxY = Math.max(maxY, info.bbox.maxY)
     }
-  })
-  .filter(
-    (l) =>
-      l.area > 8 &&
-      l.x >= CROP.x && l.x <= CROP.x + CROP.w &&
-      l.y >= CROP.y && l.y <= CROP.y + CROP.h,
-  )
+  }
+  const w0 = maxX - minX
+  const h0 = maxY - minY
+  const padX = Math.max(w0 * 0.12, 6)
+  const padY = Math.max(h0 * 0.08, 6)
+  const x = minX - padX
+  const y = minY - padY
+  const w = w0 + 2 * padX
+  const h = h0 + 2 * padY
+  return { viewBox: `${x} ${y} ${w} ${h}`, x, y, w, h }
+}
+
+export interface MapLabel {
+  id: string
+  name: string
+  x: number
+  y: number
+}
+
+// Country names whose centre falls inside the crop (skips tiny ones).
+export function labelsInCrop(crop: Crop, minArea = 8): MapLabel[] {
+  return REGIONS.filter((r) => NAMES[r.id])
+    .map((r) => ({ id: r.id, name: NAMES[r.id], x: INFO[r.id].cx, y: INFO[r.id].cy, area: INFO[r.id].area }))
+    .filter(
+      (l) =>
+        l.area > minArea &&
+        l.x >= crop.x && l.x <= crop.x + crop.w &&
+        l.y >= crop.y && l.y <= crop.y + crop.h,
+    )
+    .map(({ id, name, x, y }) => ({ id, name, x, y }))
+}

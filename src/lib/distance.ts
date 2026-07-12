@@ -1,6 +1,3 @@
-// Destination: Garda Hotel San Vigilio Golf, southern Lake Garda (approx).
-export const GARDA = { lat: 45.44, lon: 10.56, name: 'Gardasjøen' }
-
 // Great-circle distance in km between two lat/lon points.
 export function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 6371
