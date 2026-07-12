@@ -1,29 +1,54 @@
 import { useState } from 'react'
+import type { ComponentType } from 'react'
 import Flags from './Flags'
 import Memory from './Memory'
+import Reaction from './Reaction'
+import RockPaperScissors from './RockPaperScissors'
+import DistanceGuess from './DistanceGuess'
+import PlateMath from './PlateMath'
+import Anagram from './Anagram'
+import RouteOrder from './RouteOrder'
+import WordSearch from './WordSearch'
 
-type Sub = 'meny' | 'flagg' | 'husk'
+interface Game {
+  id: string
+  emoji: string
+  name: string
+  desc: string
+  two: boolean // supports two players
+  C: ComponentType
+}
 
-const GAMES: { id: Sub; emoji: string; name: string; desc: string }[] = [
-  { id: 'flagg', emoji: '🚩', name: 'Gjett landet', desc: 'Kjenn igjen flaggene fra Europa' },
-  { id: 'husk', emoji: '🧠', name: 'Husk-spillet', desc: 'Finn parene – memory med reise-symboler' },
+const GAMES: Game[] = [
+  { id: 'flagg', emoji: '🚩', name: 'Gjett landet', desc: 'Kjenn igjen flaggene fra Europa', two: false, C: Flags },
+  { id: 'husk', emoji: '🧠', name: 'Husk-spillet', desc: 'Finn parene – memory med reise-symboler', two: false, C: Memory },
+  { id: 'reaksjon', emoji: '⚡', name: 'Reaksjonstest', desc: 'Trykk når skjermen blir grønn', two: true, C: Reaction },
+  { id: 'saks', emoji: '✊', name: 'Stein-saks-papir', desc: 'Mot appen eller mot hverandre', two: true, C: RockPaperScissors },
+  { id: 'avstand', emoji: '📏', name: 'Gjett avstanden', desc: 'Hvem gjetter nærmest?', two: true, C: DistanceGuess },
+  { id: 'skiltmatte', emoji: '🔢', name: 'Skilt-matte', desc: 'Regn ut tallene på skiltet', two: true, C: PlateMath },
+  { id: 'ordsok', emoji: '🔤', name: 'Ordsøk', desc: 'Finn de skjulte reise-ordene', two: false, C: WordSearch },
+  { id: 'anagram', emoji: '🔀', name: 'Vri på ordet', desc: 'Stokk bokstavene til et ord', two: false, C: Anagram },
+  { id: 'rute', emoji: '🗺️', name: 'Reiseruta', desc: 'Sett landene i riktig rekkefølge', two: false, C: RouteOrder },
 ]
 
 export default function Games() {
-  const [sub, setSub] = useState<Sub>('meny')
+  const [openId, setOpenId] = useState<string | null>(null)
+  const open = GAMES.find((g) => g.id === openId)
 
-  if (sub === 'meny') {
+  if (!open) {
     return (
       <>
         <h2 className="screen-title">🎮 Minispill</h2>
         <p className="subtle" style={{ color: '#e0f2fe', margin: '0 4px 12px' }}>
-          Spill så mye du vil – perfekt når veien blir lang!
+          Spill så mye du vil – perfekt når veien blir lang! 👥 = kan spilles to sammen.
         </p>
         {GAMES.map((g) => (
-          <button key={g.id} className="row-item" onClick={() => setSub(g.id)}>
+          <button key={g.id} className="row-item" onClick={() => setOpenId(g.id)}>
             <span className="ricon">{g.emoji}</span>
             <span style={{ flex: 1 }}>
-              <div className="rtitle">{g.name}</div>
+              <div className="rtitle">
+                {g.name} {g.two && <span className="twoplayer-badge">👥 2</span>}
+              </div>
               <div className="rdesc">{g.desc}</div>
             </span>
             <span style={{ fontSize: 22, color: 'var(--muted)' }}>▶</span>
@@ -33,12 +58,15 @@ export default function Games() {
     )
   }
 
+  const Game = open.C
   return (
     <>
-      <button className="backbtn" onClick={() => setSub('meny')}>
+      <button className="backbtn" onClick={() => setOpenId(null)}>
         ← Minispill
       </button>
-      <div style={{ marginTop: 10 }}>{sub === 'flagg' ? <Flags /> : <Memory />}</div>
+      <div style={{ marginTop: 10 }}>
+        <Game />
+      </div>
     </>
   )
 }

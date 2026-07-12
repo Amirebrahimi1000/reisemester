@@ -8,6 +8,7 @@ import Missions from './screens/Missions'
 import Plates from './screens/Plates'
 import Games from './screens/Games'
 import Journal from './screens/Journal'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 export type Screen = 'home' | 'bingo' | 'quiz' | 'land' | 'oppdrag' | 'skilt' | 'spill' | 'dagbok'
 
@@ -64,14 +65,16 @@ function Shell() {
         <span className="starcount">⭐ {stars}</span>
       </div>
 
-      {screen === 'home' && <Home go={setScreen} />}
-      {screen === 'bingo' && <Bingo />}
-      {screen === 'quiz' && <Quiz />}
-      {screen === 'land' && <Countries />}
-      {screen === 'oppdrag' && <Missions />}
-      {screen === 'skilt' && <Plates />}
-      {screen === 'spill' && <Games />}
-      {screen === 'dagbok' && <Journal />}
+      <ErrorBoundary key={screen}>
+        {screen === 'home' && <Home go={setScreen} />}
+        {screen === 'bingo' && <Bingo />}
+        {screen === 'quiz' && <Quiz />}
+        {screen === 'land' && <Countries />}
+        {screen === 'oppdrag' && <Missions />}
+        {screen === 'skilt' && <Plates />}
+        {screen === 'spill' && <Games />}
+        {screen === 'dagbok' && <Journal />}
+      </ErrorBoundary>
 
       <nav className="tabbar">
         {TABS.map((t) => (

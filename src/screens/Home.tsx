@@ -28,7 +28,7 @@ export default function Home({ go }: { go: (s: Screen) => void }) {
     home: '',
     bingo: `${bingoCells}/${totalBingo}`,
     quiz: `${quizDone}/${totalQuiz}`,
-    spill: '2 spill',
+    spill: '9 spill',
     land: `${state.countries.length}/${COUNTRIES.length}`,
     oppdrag: `${state.missions.length}/${MISSIONS.length}`,
     skilt: `${state.plates.length}/${PLATES.length}`,
