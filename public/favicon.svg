@@ -1,36 +1,65 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#7dd3fc"/>
+      <stop offset="0" stop-color="#38bdf8"/>
+      <stop offset=".55" stop-color="#0e9bc0"/>
       <stop offset="1" stop-color="#0e7490"/>
     </linearGradient>
-    <linearGradient id="lake" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#22d3ee"/>
-      <stop offset="1" stop-color="#0891b2"/>
+    <radialGradient id="glow" cx=".5" cy=".28" r=".7">
+      <stop offset="0" stop-color="#fef9c3" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#fef9c3" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="disk" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e7eff3"/>
+    </linearGradient>
+    <linearGradient id="needleN" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fb7185"/>
+      <stop offset="1" stop-color="#e11d48"/>
+    </linearGradient>
+    <linearGradient id="needleS" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#94a3b8"/>
+      <stop offset="1" stop-color="#64748b"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#sky)"/>
-  <circle cx="140" cy="150" r="46" fill="#fde68a"/>
-  <!-- mountains -->
-  <path d="M0 340 L120 190 L210 300 L300 170 L410 320 L512 240 L512 400 L0 400 Z" fill="#1e6b7a"/>
-  <path d="M255 205 l25 34 -50 0 z" fill="#f1f5f9"/>
-  <path d="M300 170 l30 42 -60 0 z" fill="#f8fafc"/>
-  <!-- lake -->
-  <rect x="0" y="360" width="512" height="152" fill="url(#lake)"/>
-  <!-- road -->
-  <path d="M150 512 L235 372 L285 372 L200 512 Z" fill="#334155"/>
-  <rect x="212" y="392" width="14" height="26" rx="6" fill="#fde68a" transform="rotate(-30 219 405)"/>
-  <rect x="190" y="452" width="16" height="30" rx="7" fill="#fde68a" transform="rotate(-30 198 467)"/>
-  <!-- car -->
-  <g transform="translate(256 420)">
-    <ellipse cx="0" cy="34" rx="70" ry="12" fill="#0369a1" opacity="0.35"/>
-    <rect x="-64" y="-6" width="128" height="42" rx="18" fill="#fb7185"/>
-    <path d="M-42 -6 q10 -34 42 -34 q34 0 44 34 z" fill="#f43f5e"/>
-    <rect x="-30" y="-26" width="26" height="20" rx="6" fill="#cffafe"/>
-    <rect x="6" y="-26" width="26" height="20" rx="6" fill="#cffafe"/>
-    <circle cx="-38" cy="38" r="17" fill="#0f172a"/>
-    <circle cx="-38" cy="38" r="7" fill="#94a3b8"/>
-    <circle cx="38" cy="38" r="17" fill="#0f172a"/>
-    <circle cx="38" cy="38" r="7" fill="#94a3b8"/>
+
+  <!-- full-bleed background (OS applies its own rounded mask) -->
+  <rect width="512" height="512" fill="url(#sky)"/>
+  <rect width="512" height="512" fill="url(#glow)"/>
+
+  <!-- distant mountains along the base -->
+  <path d="M0 388 L96 300 L168 360 L268 276 L360 356 L440 302 L512 360 L512 512 L0 512 Z" fill="#0b6076" opacity=".55"/>
+  <path d="M0 430 L120 342 L214 410 L300 336 L392 408 L470 356 L512 392 L512 512 L0 512 Z" fill="#095264"/>
+  <path d="M268 276 l26 34 -52 0 z" fill="#f1f5f9"/>
+  <path d="M300 336 l22 28 -44 0 z" fill="#f8fafc"/>
+
+  <!-- compass -->
+  <g transform="translate(256 232)">
+    <ellipse cx="0" cy="150" rx="118" ry="20" fill="#063a49" opacity=".28"/>
+    <circle r="140" fill="url(#disk)"/>
+    <circle r="140" fill="none" stroke="#0e7490" stroke-width="12"/>
+    <circle r="112" fill="none" stroke="#cbd5e1" stroke-width="4"/>
+
+    <!-- cardinal + minor ticks -->
+    <g stroke-linecap="round">
+      <line x1="0" y1="-132" x2="0" y2="-108" stroke="#f59e0b" stroke-width="10"/>
+      <line x1="132" y1="0" x2="108" y2="0" stroke="#f59e0b" stroke-width="10"/>
+      <line x1="0" y1="132" x2="0" y2="108" stroke="#f59e0b" stroke-width="10"/>
+      <line x1="-132" y1="0" x2="-108" y2="0" stroke="#f59e0b" stroke-width="10"/>
+    </g>
+    <g stroke="#94a3b8" stroke-width="6" stroke-linecap="round">
+      <line x1="86" y1="-86" x2="72" y2="-72"/>
+      <line x1="86" y1="86" x2="72" y2="72"/>
+      <line x1="-86" y1="86" x2="-72" y2="72"/>
+      <line x1="-86" y1="-86" x2="-72" y2="-72"/>
+    </g>
+
+    <!-- needle, pointing NE -->
+    <g transform="rotate(38)">
+      <path d="M0 -104 L26 0 L0 20 Z" fill="url(#needleN)"/>
+      <path d="M0 104 L-26 0 L0 -20 Z" fill="url(#needleS)"/>
+    </g>
+    <circle r="18" fill="#fbbf24"/>
+    <circle r="7" fill="#fff"/>
   </g>
 </svg>

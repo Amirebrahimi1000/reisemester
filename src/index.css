@@ -840,6 +840,13 @@ button {
   font-size: 76px;
 }
 
+.intro .intro-logo {
+  width: 140px;
+  height: 140px;
+  border-radius: 30px;
+  box-shadow: 0 14px 34px rgba(8, 47, 73, 0.5);
+}
+
 .intro input {
   font-family: inherit;
   font-size: 18px;
