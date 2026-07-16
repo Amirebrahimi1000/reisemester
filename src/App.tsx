@@ -78,10 +78,10 @@ function Shell() {
   if (!state.playerName) {
     return (
       <div className="intro">
-        <div className="big-emoji">🚗🏔️</div>
+        <div className="big-emoji">🧭🏔️</div>
         <h1>Reisemester</h1>
         <p style={{ color: '#fff', maxWidth: 320, fontWeight: 700 }}>
-          Spill og oppgaver for hele bilturen – uansett hvor dere skal! Hva heter du?
+          Spill og oppgaver for hele reisen – uansett hvor i Europa dere skal! Hva heter du?
         </p>
         <input
           autoFocus
