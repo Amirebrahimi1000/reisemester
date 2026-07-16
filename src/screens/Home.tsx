@@ -12,7 +12,7 @@ const TILES: { id: Screen; emoji: string; name: string; desc: string }[] = [
   { id: 'bingo', emoji: '🎯', name: 'Reisebingo', desc: 'Finn ting ut av bilvinduet' },
   { id: 'quiz', emoji: '❓', name: 'Quiz', desc: 'Spørsmål om landene' },
   { id: 'spill', emoji: '🎮', name: 'Minispill', desc: 'Flaggspill og husk-spill' },
-  { id: 'land', emoji: '🌍', name: 'Grenseland', desc: 'Lås opp fakta om hvert land' },
+  { id: 'land', emoji: '🌍', name: 'Grenseland', desc: 'Sjekk inn i land og se fakta' },
   { id: 'oppdrag', emoji: '🏆', name: 'Oppdrag', desc: 'Morsomme utfordringer' },
   { id: 'skilt', emoji: '🚗', name: 'Skiltjakt', desc: 'Samle bilskilt fra Europa' },
   { id: 'dagbok', emoji: '📔', name: 'Reisedagbok', desc: 'Skriv om turen din' },

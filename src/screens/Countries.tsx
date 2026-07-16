@@ -49,7 +49,7 @@ export default function Countries() {
           setGpsMsg(`🎉 Dere er i ${country.name}! Landet er låst opp – bonusstjerner! ⭐`)
         } else {
           setGpsMsg(
-            '🤔 Fant ikke akkurat hvilket land dere er i – kanskje dere er mellom to land eller i en tunnel. Prøv igjen litt senere, eller bruk «Lås opp».',
+            '🤔 Fant ikke akkurat hvilket land dere er i – kanskje dere er mellom to land eller i en tunnel. Prøv igjen når dere er godt inne i landet.',
           )
         }
       },
@@ -57,7 +57,7 @@ export default function Countries() {
         setGpsBusy(false)
         setGpsMsg(
           err.code === err.PERMISSION_DENIED
-            ? '🔐 Du må tillate posisjon for at dette skal virke. Bruk gjerne «Lås opp» i stedet.'
+            ? '🔐 Dere må tillate posisjon for å låse opp et land som besøkt. Dere kan uansett kikke på fakta om alle land nedenfor.'
             : '🛰️ Fikk ikke tak i posisjonen. GPS trenger fri himmel – det er vanskelig i tunneler. Prøv igjen ute i det fri.',
         )
       },
@@ -69,7 +69,8 @@ export default function Countries() {
     <>
       <h2 className="screen-title">🌍 Grenseland</h2>
       <p className="subtle" style={{ color: '#e0f2fe', margin: '0 4px 10px' }}>
-        Hver gang dere kjører inn i et nytt land, lås det opp og oppdag hemmelige fakta! ⭐⭐⭐
+        Kjør inn i et land og trykk <b>«📍 Jeg er her nå!»</b> for å låse det opp som besøkt – da
+        teller det på merker og diplom. Du kan alltid kikke på fakta om alle land! ⭐
       </p>
 
       <button className="primary gps-btn" onClick={findMe} disabled={gpsBusy}>
@@ -78,55 +79,33 @@ export default function Countries() {
       {gpsMsg && <div className="gps-msg">{gpsMsg}</div>}
 
       {routeCountries.map((c) => {
-        const unlocked = state.countries.includes(c.id)
+        const visited = state.countries.includes(c.id)
         const open = openId === c.id
 
-        if (!unlocked) {
-          return (
-            <div key={c.id} className="row-item locked">
-              <span className="ricon">{c.flag}</span>
-              <span>
-                <div className="rtitle">{c.name}</div>
-                <div className="rdesc">🔒 Ikke krysset ennå</div>
-              </span>
-              <button
-                className="primary"
-                style={{ width: 'auto', margin: 0, padding: '10px 14px', fontSize: 14 }}
-                onClick={() => {
-                  unlockCountry(c.id)
-                  setOpenId(c.id)
-                }}
-              >
-                Lås opp
-              </button>
-            </div>
-          )
-        }
-
         return (
-          <div key={c.id} className="card" style={{ marginBottom: 12 }}>
+          <div key={c.id} className={`card country-card ${visited ? '' : 'notvisited'}`} style={{ marginBottom: 12 }}>
             <button
+              className="country-head"
               onClick={() => setOpenId(open ? null : c.id)}
-              style={{
-                background: 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                width: '100%',
-                textAlign: 'left',
-                padding: 0,
-              }}
             >
-              <span className="ricon" style={{ fontSize: 34 }}>
+              <span className={`ricon ${visited ? '' : 'ricon-dim'}`} style={{ fontSize: 34 }}>
                 {c.flag}
               </span>
               <span style={{ flex: 1 }}>
                 <div className="rtitle" style={{ fontSize: 19 }}>
                   {c.name}
                 </div>
-                <div className="hello-big">{c.hello}</div>
+                {visited ? (
+                  <div className="hello-big">{c.hello}</div>
+                ) : (
+                  <div className="rdesc">🔒 Ikke krysset ennå</div>
+                )}
               </span>
-              <span style={{ fontSize: 20, color: 'var(--muted)' }}>{open ? '▲' : '▼'}</span>
+              {visited ? (
+                <span className="visited-pill">✓ Besøkt</span>
+              ) : (
+                <span className="seefacts">{open ? '▲ Lukk' : '👀 Se fakta'}</span>
+              )}
             </button>
 
             {open && (
